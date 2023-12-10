@@ -65,7 +65,7 @@ export default function Artigo(props) {
                             {artigo.kb_author_email}
                         </div>
                         <div className={styles['artigo-info']}>
-                            {artigo.kb_liked_count}
+                            {artigo.kb_liked_count + (artigo.kb_liked_count === 1 ? ' like' : ' likes')}
                         </div>
                     </div>
                     <div className={styles['artigo-body']}>
