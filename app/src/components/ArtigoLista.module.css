@@ -1,0 +1,40 @@
+.input-pesquisar {
+    width: 100%;
+    height: 32px;
+    margin-bottom: 0;
+}
+
+.pesquisa {
+    margin-bottom: 30px;
+}
+
+.botao-pesquisar {
+    background-color: #eca900;
+    margin-right: 0;
+}
+
+.botao-pesquisar:hover {
+    background-color: #c38c00;
+}
+
+.lista-item {
+    margin-bottom: 30px;
+}
+
+.item-botoes {
+    min-width: fit-content;
+    align-items: center;
+}
+
+.artigo-clicavel {
+    padding: 5px;
+}
+
+.artigo-clicavel:hover {
+    cursor: pointer;
+    background-color: #2f3233;
+}
+
+.metade {
+    min-width: 50%;
+}

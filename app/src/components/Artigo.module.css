@@ -1,0 +1,24 @@
+.artigo-container {
+    margin: 30px auto;
+    width: 80%;
+    justify-content: center;
+}
+
+.artigo-title {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.artigo-info {
+    opacity: 0.6;
+    margin-right: 15px;
+    font-size: 14px;
+}
+
+.artigo-body {
+    margin-bottom: 10px;
+}
+
+.artigo-info-container {
+    margin-bottom: 15px;
+}
