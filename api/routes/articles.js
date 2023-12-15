@@ -42,9 +42,16 @@ router.get('/:id', async (req, res) => {
 })
 
 // Incrementar likes
-router.use('/:id/like', contador()) //Middleware de contagem incrementa contador de likes
-router.post('/:id/like', (req, res) => {
-    res.status(200).send()
+router.post('/:id/like', async (req, res) => {
+    try {
+        var artigo = await Article.findOne({ "_id": req.params.id })
+        const likes = artigo.kb_liked_count + 1
+        await Article.findByIdAndUpdate(req.params.id, { kb_liked_count: likes }, { new: true })
+        res.status(200).send({ success: true, message: "Like incrementado com sucesso.", data: null })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false, message: 'Erro ao incrementar like do artigo.', data: null })
+    }
 })
 
 // Inserir um novo artigo
@@ -68,7 +75,7 @@ router.put('/', auth())
 router.put('/', async (req, res) => {
     const request = req.body
     try {
-        const response = await Article.findByIdAndUpdate(request._id, { kb_title: request.kb_title, kb_body: request.kb_body, kb_featured: request.kb_featured}, { new: true })
+        const response = await Article.findByIdAndUpdate(request._id, { kb_title: request.kb_title, kb_body: request.kb_body, kb_featured: request.kb_featured }, { new: true })
         res.json({ success: true, message: null, data: response })
     } catch (err) {
         res.status(500).json({ success: false, message: err.message, data: null })

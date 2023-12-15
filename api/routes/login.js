@@ -65,7 +65,7 @@ router.post('/', async function (req, res) {
             token: tokenAssinado
         }
 
-        return res.status(200).json(retorno)
+        return res.status(200).json({ success: true, message: 'Login efetuado com sucesso.', data: retorno })
     } catch (error) {
         console.log(error)
         return res.status(500).json('Não foi possível efetuar o login.')

@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react'
-import axios from 'axios'
+import BaseService from '../services/baseService'
 
 export default function ArtigoCadastro(props) {
     const [inputs, setInputs] = useState({ kb_title: "", kb_body: "", kb_featured: "", _id: null });
@@ -13,38 +13,25 @@ export default function ArtigoCadastro(props) {
     async function salvar() {
         var resp;
         if (!props.artigoId) {
-            try {
-                resp = await axios.post(process.env.NEXT_PUBLIC_URL_API + 'artigos', inputs, { headers: { 'token': sessionStorage.getItem('token'), 'Content-Type': 'application/json' } })
-            } catch (err) {
-                clearInputs()
-                return console.log(err)
-            }
+            resp = await BaseService.post('artigos', inputs)
         } else {
-            try {
-                inputs._id = props.artigoId
-                resp = await axios.put(process.env.NEXT_PUBLIC_URL_API + 'artigos', inputs, { headers: { 'token': sessionStorage.getItem('token'), 'Content-Type': 'application/json' } })
-            } catch (err) {
-                clearInputs()
-                return console.log(err)
-            }
+            resp = await BaseService.put('artigos', inputs)
         }
-        if (!resp.data.success) return alert(resp.data.message)
+
+        if (!resp) return alert('Sem resposta do servidor.')
+        if (!resp.success) return alert(resp.message)
+
         window.location.href = "/artigos"
     }
 
     async function getArtigo() {
+        clearInputs()
         if (!props.artigoId) return
-        var resp;
-        try {
-            resp = await axios.get(process.env.NEXT_PUBLIC_URL_API + 'artigos/' + props.artigoId)
-        } catch (err) {
-            clearInputs()
-            return console.log(err)
-        }
-
-        const artigo = resp.data.data
-        if (!artigo) return clearInputs()
-
+        var resp = await BaseService.get()
+        if (!resp) return alert('Sem resposta do servidor.')
+        if (!resp.success) return alert(resp.message)
+        const artigo = resp.data
+        if (!artigo) return
         setInputs({ kb_body: artigo.kb_body, kb_title: artigo.kb_title, kb_featured: artigo.kb_featured })
     }
 

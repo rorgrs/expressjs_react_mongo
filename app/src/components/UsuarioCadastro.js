@@ -1,9 +1,10 @@
 import { React, useState, useEffect } from 'react'
-import axios from 'axios'
+import BaseService from '../services/baseService'
 
 export default function UsuarioCadastro(props) {
     const [inputs, setInputs] = useState({ author_name: "", author_user: "", author_email: "", author_pwd: "", author_level: "normal", author_status: 1 })
     const [admin, setAdmin] = useState(false)
+
     useEffect(() => {
         (async () => {
 
@@ -11,19 +12,10 @@ export default function UsuarioCadastro(props) {
     }, [])
 
     async function salvar() {
-        var resp;
-        try {
-            resp = await axios.post(process.env.NEXT_PUBLIC_URL_API + 'usuarios', inputs, { headers: { 'token': sessionStorage.getItem('token'), 'Content-Type': 'application/json' } })
-        } catch (err) {
-            clearInputs()
-            return console.log(err)
-        }
-        if (!resp.data.success) return alert(resp.data.message)
+        var resp = await BaseService.post('usuarios', inputs)
+        if (!resp) return alert('Sem resposta do servidor.')
+        if (!resp.success) return alert(resp.message)
         window.location.href = "/"
-    }
-
-    function clearInputs() {
-        setInputs({ nome: "", login: "", email: "", senha: "", admin: false })
     }
 
     function handleInputs(event) {

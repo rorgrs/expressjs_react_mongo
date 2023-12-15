@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from 'react'
-import axios from 'axios'
 import styles from './Artigo.module.css'
+import BaseService from '../services/baseService'
 
 export default function Artigo(props) {
     const [artigo, setArtigo] = useState(null)
@@ -13,27 +13,20 @@ export default function Artigo(props) {
     }, [props.artigoId])
 
     async function getArtigo() {
-        if(!props.artigoId) return;
-        var resp;
-        try {
-            resp = await axios.get(process.env.NEXT_PUBLIC_URL_API + 'artigos/' + props.artigoId)
-        } catch (err) {
-            return console.log(err)
-        }
+        if (!props.artigoId) return;
+        var resp = await BaseService.get('artigos/' + props.artigoId)
+        if (!resp) return alert('Sem resposta do servidor.')
+        if (!resp.success) return alert(resp.message)
 
-        const artigo = resp.data.data
+        const artigo = resp.data
         if (!artigo) return clearArtigo()
-
         setArtigo(artigo)
     }
 
     async function incrementarLike() {
-        var resp;
-        try {
-            resp = await axios.post(process.env.NEXT_PUBLIC_URL_API + 'artigos/' + props.artigoId + '/like')
-        } catch (err) {
-            return console.log(err)
-        }
+        var resp = await BaseService.post('artigos/' + props.artigoId + '/like')
+        if (!resp) return alert('Sem resposta do servidor.')
+        if (!resp.success) return alert(resp.message)
         setLiked(true)
         await getArtigo()
     }

@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react'
-import axios from 'axios'
+import BaseService from '../services/baseService'
 
 export default function Header() {
     const [usuario, setUsuario] = useState(null)
@@ -10,13 +10,10 @@ export default function Header() {
         (async () => {
             let id = sessionStorage.getItem('id')
             if (!id) return
-            var resp;
-            try {
-                resp = await axios.get(process.env.NEXT_PUBLIC_URL_API + 'usuarios/' + id)
-            } catch (err) {
-                return console.log(err)
-            }
-            const usuario = resp.data.data
+            var resp = await BaseService.get('usuarios/' + id)
+            if (!resp) return alert('Sem resposta do servidor.')
+            if (!resp.success) return alert(resp.message)
+            const usuario = resp.data
             if (!usuario) return
             setUsuario(usuario)
             setLogoutButton(true)

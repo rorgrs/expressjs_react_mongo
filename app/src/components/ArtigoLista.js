@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react'
-import axios from 'axios'
+import BaseService from '../services/baseService'
 import stylesArtigos from './Artigo.module.css'
 import stylesLista from './ArtigoLista.module.css'
 
@@ -19,41 +19,31 @@ export default function ArtigoLista() {
     async function validarUsuario() {
         let id = sessionStorage.getItem('id')
         if (!id) return
-        var resp;
-        try {
-            resp = await axios.get(process.env.NEXT_PUBLIC_URL_API + 'usuarios/' + id)
-        } catch (err) {
-            return console.log(err)
-        }
-        const usuario = resp.data.data
+        var resp = await BaseService.get('usuarios/' + id)
+        if (!resp) return alert('Sem resposta do servidor.')
+        if (!resp.success) return alert(resp.message)
+        const usuario = resp.data
         if (!usuario) return
         if (usuario.author_level !== 'admin') return
         setAdminButton(true)
     }
 
     async function getArtigos(query) {
-        var resp
-        try {
-            var req = 'artigos/lista/'
-            if (query) req += query
-            resp = await axios.get(process.env.NEXT_PUBLIC_URL_API + req)
-        } catch (err) {
-            return console.log(err)
-        }
-
-        const artigos = resp.data.data
+        var req = 'artigos/lista/'
+        if (query) req += query
+        var resp = await BaseService.get(req)
+        if (!resp) return alert('Sem resposta do servidor.')
+        if (!resp.success) return alert(resp.message)
+        const artigos = resp.data
         if (!artigos) return
-
         mapArtigos(artigos)
     }
 
     async function excluirArtigo(id) {
-        var resp
-        try {
-            resp = await axios.delete(process.env.NEXT_PUBLIC_URL_API + 'artigos/' + id, {headers: {'token': sessionStorage.getItem('token')}})
-        } catch (err) {
-            return console.log(err)
-        }
+        var resp = await BaseService.delete('artigos/' + id)
+        if (!resp) return alert('Sem resposta do servidor.')
+        if (!resp.success) return alert(resp.message)
+        setArtigoFiltros('')
         await pesquisarArtigos()
     }
 
@@ -106,7 +96,7 @@ export default function ArtigoLista() {
     }
 
     return (
-        <div className={'container-column content '+ stylesLista.metade}>
+        <div className={'container-column content ' + stylesLista.metade}>
             <div className={'container ' + stylesLista.pesquisa} id="barra-pesquisa">
                 <input type="text" className={stylesLista['input-pesquisar']} id="pesquisa" placeholder="Pesquisar por título"
                     value={artigoFiltros} onChange={handleArtigoFiltros} />

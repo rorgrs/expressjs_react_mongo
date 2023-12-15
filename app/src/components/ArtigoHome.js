@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from 'react'
-import axios from 'axios'
+import BaseService from '../services/baseService'
 
 export default function ArtigosHome() {
     const [htmlArtigosDestaque, setArtigosDestaque] = useState(null)
@@ -7,14 +7,11 @@ export default function ArtigosHome() {
 
     useEffect(() => {
         (async () => {
-            var resp;
-            try {
-                resp = await axios.get(process.env.NEXT_PUBLIC_URL_API + 'artigos/lista')
-            } catch (err) {
-                return console.log(err)
-            }
+            var resp = await BaseService.get('artigos/lista')
+            if (!resp) return alert('Sem resposta do servidor.')
+            if (!resp.success) return alert(resp.message)
 
-            const artigos = resp.data.data
+            const artigos = resp.data
             if (!artigos) return
 
             var artigosDestaque = artigos.filter((e) => e.kb_featured)
